@@ -3,6 +3,7 @@ require 'json'
 require_relative './car.rb'
 require_relative './period.rb'
 require_relative './rental.rb'
+require_relative './option.rb'
 
 class Database
 	attr_reader :level
@@ -34,6 +35,15 @@ class Database
 			Rental.new(db: self, **attributes)
 		end
 	end
+
+	def options
+		@options ||= data['options'].map do |hash|
+			attributes = hash.transform_keys(&:to_sym)
+
+			Option.new(**attributes)
+		end
+	end
+
 
 	def generate_output_file(output)
 		File.open(output_filepath, 'w') { |f| f.write JSON.pretty_generate(rentals: output) }

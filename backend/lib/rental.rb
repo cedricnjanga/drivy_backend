@@ -18,21 +18,29 @@ class Rental
 	end
 
 	def price
-		distance_price.to_i + duration_price.to_i
+		price_without_options + options_price.to_i
 	end
 
 	def commission
-		Commission.new(price, period.number_of_days)
+		Commission.new(price_without_options, period.number_of_days)
 	end
 
 	def actions
 		[
 			{ who: 'driver', type: 'debit', amount: price },
-			{ who: 'owner', type: 'credit', amount: price - commission.total_amount },
+			{ who: 'owner', type: 'credit', amount: price - (commission.total_amount + options_price.additional_insurance) },
 			{ who: 'insurance', type: 'credit', amount: commission.insurance_fee },
 			{ who: 'assistance', type: 'credit', amount: commission.assistance_fee },
-			{ who: 'drivy', type: 'credit', amount: commission.drivy_fee },
+			{ who: 'drivy', type: 'credit', amount: commission.drivy_fee + options_price.additional_insurance },
 		]
+	end
+
+	def options
+		db.options.select { |option| option.rental_id === id }
+	end
+
+	def price_without_options
+		distance_price.to_i + duration_price.to_i
 	end
 
 	def distance_price
@@ -41,5 +49,9 @@ class Rental
 
 	def duration_price
 		Price::Duration.new(car.price_per_day, period.number_of_days)
+	end
+
+	def options_price
+		Price::Options.new(options, period.number_of_days)
 	end
 end

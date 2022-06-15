@@ -8,7 +8,7 @@ require_relative '../lib/price.rb'
 
 describe Rental do
 	before do
-		@rental = Rental.new id: 1, car_id: 1, db: Database.new('level2'), start_date: '2022-06-14', end_date: '2022-06-14', distance: 1
+		@rental = Rental.new id: 1, car_id: 1, db: Database.new('level5'), start_date: '2022-06-14', end_date: '2022-06-14', distance: 1
 	end
 
 	describe '#initialize' do
@@ -54,8 +54,8 @@ describe Rental do
 		end
 	
 		it 'should compute right price' do
-			@rental.stub(:distance_price, 1000) do
-				@rental.stub(:duration_price, 1000) do
+			@rental.stub(:price_without_options, 1000) do
+				@rental.stub(:options_price, OpenStruct.new(to_i: 1000)) do
 					assert_equal(2000, @rental.price)
 				end
 			end
@@ -77,6 +77,16 @@ describe Rental do
 			@rental.stub(:distance, 5) do
 				@rental.stub(:car, OpenStruct.new(price_per_km: 5)) do
 					assert_instance_of(Price::Distance, @rental.distance_price)
+				end
+			end
+		end
+	end
+
+	describe '#options_price' do
+		it 'should be an instance of Price::Options' do
+			@rental.stub(:options, []) do
+				@rental.stub(:period, OpenStruct.new(number_of_days: 5)) do
+					assert_instance_of(Price::Options, @rental.options_price)
 				end
 			end
 		end

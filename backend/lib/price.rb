@@ -43,4 +43,39 @@ module Price
 			(distance * price_per_km).to_i
 		end
 	end
+
+	class Options
+		attr_reader :options, :number_of_days
+
+		def initialize options, number_of_days
+			@options = options
+			@number_of_days = number_of_days
+		end
+
+		def gps
+			get_option_amount('gps')
+		end
+
+		def baby_seat
+			get_option_amount('baby_seat')
+		end
+
+		def additional_insurance
+			get_option_amount('additional_insurance')
+		end
+
+		def to_i
+			(gps + baby_seat + additional_insurance).to_i
+		end
+
+		private
+
+		def get_option_amount type
+			unless option = options.find { |o| o.type === type }
+				return 0
+			end
+
+			return (option.price_per_day * number_of_days).to_i
+		end
+	end
 end
