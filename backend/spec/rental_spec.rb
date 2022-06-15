@@ -81,4 +81,10 @@ describe Rental do
 			end
 		end
 	end
+
+	describe '#commission' do
+		it 'should be an instance of Commission' do
+			assert_instance_of(Commission, @rental.commission)
+		end
+	end
 end

@@ -1,5 +1,6 @@
 require_relative './period'
 require_relative './price'
+require_relative './commission'
 
 class Rental
 	attr_reader :id, :car_id, :db, :period, :distance, :price
@@ -18,6 +19,10 @@ class Rental
 
 	def price
 		distance_price.to_i + duration_price.to_i
+	end
+
+	def commission
+		Commission.new(price, period.number_of_days)
 	end
 
 	def distance_price
