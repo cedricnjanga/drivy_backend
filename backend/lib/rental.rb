@@ -1,4 +1,5 @@
 require_relative './period'
+require_relative './price'
 
 class Rental
 	attr_reader :id, :car_id, :db, :period, :distance, :price
@@ -16,14 +17,14 @@ class Rental
 	end
 
 	def price
-		(distance_price + duration_price).to_i
+		distance_price.to_i + duration_price.to_i
 	end
 
 	def distance_price
-		distance * car.price_per_km
+		Price::Distance.new(car.price_per_km, distance)
 	end
 
 	def duration_price
-		period.number_of_days * car.price_per_day
+		Price::Duration.new(car.price_per_day, period.number_of_days)
 	end
 end

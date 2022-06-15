@@ -4,10 +4,11 @@ require_relative '../lib/rental.rb'
 require_relative '../lib/period.rb'
 require_relative '../lib/car.rb'
 require_relative '../lib/database.rb'
+require_relative '../lib/price.rb'
 
 describe Rental do
 	before do
-		@rental = Rental.new id: 1, car_id: 1, db: Database.new('level1'), start_date: '2022-06-14', end_date: '2022-06-14', distance: 1
+		@rental = Rental.new id: 1, car_id: 1, db: Database.new('level2'), start_date: '2022-06-14', end_date: '2022-06-14', distance: 1
 	end
 
 	describe '#initialize' do
@@ -62,32 +63,20 @@ describe Rental do
 	end
 
 	describe '#duration_price' do
-		it 'should return right amount' do
+		it 'should be an instance of Price::Duration' do
 			@rental.stub(:period, OpenStruct.new(number_of_days: 5)) do
 				@rental.stub(:car, OpenStruct.new(price_per_day: 5)) do
-					assert_equal(25, @rental.duration_price)
-				end
-			end
-
-			@rental.stub(:period, OpenStruct.new(number_of_days: 100)) do
-				@rental.stub(:car, OpenStruct.new(price_per_day: 100)) do
-					assert_equal(10000, @rental.duration_price)
+					assert_instance_of(Price::Duration, @rental.duration_price)
 				end
 			end
 		end
 	end
 
 	describe '#distance_price' do
-		it 'should return right amount' do
+		it 'should be an instance of Price::Distance' do
 			@rental.stub(:distance, 5) do
 				@rental.stub(:car, OpenStruct.new(price_per_km: 5)) do
-					assert_equal(25, @rental.distance_price)
-				end
-			end
-
-			@rental.stub(:distance, 100) do
-				@rental.stub(:car, OpenStruct.new(price_per_km: 100)) do
-					assert_equal(10000, @rental.distance_price)
+					assert_instance_of(Price::Distance, @rental.distance_price)
 				end
 			end
 		end
