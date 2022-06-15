@@ -25,6 +25,16 @@ class Rental
 		Commission.new(price, period.number_of_days)
 	end
 
+	def actions
+		[
+			{ who: 'driver', type: 'debit', amount: price },
+			{ who: 'owner', type: 'credit', amount: price - commission.total_amount },
+			{ who: 'insurance', type: 'credit', amount: commission.insurance_fee },
+			{ who: 'assistance', type: 'credit', amount: commission.assistance_fee },
+			{ who: 'drivy', type: 'credit', amount: commission.drivy_fee },
+		]
+	end
+
 	def distance_price
 		Price::Distance.new(car.price_per_km, distance)
 	end

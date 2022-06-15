@@ -87,4 +87,32 @@ describe Rental do
 			assert_instance_of(Commission, @rental.commission)
 		end
 	end
+
+	describe '#actions' do
+		it 'should have a length of 5' do
+			assert_equal(5, @rental.actions.length)
+		end
+
+		it 'should proper actions' do
+			driver_action = @rental.actions[0]
+			assert_equal('driver', driver_action[:who])
+			assert_equal('debit', driver_action[:type])
+
+			driver_action = @rental.actions[1]
+			assert_equal('owner', driver_action[:who])
+			assert_equal('credit', driver_action[:type])
+
+			driver_action = @rental.actions[2]
+			assert_equal('insurance', driver_action[:who])
+			assert_equal('credit', driver_action[:type])
+
+			driver_action = @rental.actions[3]
+			assert_equal('assistance', driver_action[:who])
+			assert_equal('credit', driver_action[:type])
+
+			driver_action = @rental.actions[4]
+			assert_equal('drivy', driver_action[:who])
+			assert_equal('credit', driver_action[:type])
+		end
+	end
 end
